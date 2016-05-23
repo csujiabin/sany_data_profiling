@@ -29,20 +29,8 @@ public class DimensionController {
         List<ParaAttributes> paraAttriList = new DimBusiness()
                 .readParaAttributes();
         
-        //String json = new Gson().toJson(paraAttriList);
         JSONArray jsonarray = JSONArray.fromObject(paraAttriList);
         return jsonarray.toString();
     }
     
-//    @RequestMapping(value="/getEquipCounts")
-//    @ResponseBody
-//    public String getEquipCounts() {
-//        logger.info("getEquipCounts called");
-//        
-//        List<ParaAttributes> paraAttriList = new DimBusiness()
-//            .readParaAttributes();
-//        String json = new Gson().toJson(equipCounts);
-//        
-//        return json;
-//    }
 }

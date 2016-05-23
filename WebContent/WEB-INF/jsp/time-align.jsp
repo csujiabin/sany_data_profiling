@@ -23,7 +23,7 @@
     <link href="sb-admin-2/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 
     <!-- DataTables Responsive CSS -->
-    <link href="sb-admin-2/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+<!--     <link href="sb-admin-2/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet"> -->
 
     <!-- Custom CSS -->
     <link href="sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
@@ -71,26 +71,6 @@
             });
         });
         
-        function moveOption(obj1, obj2) {
-             for(var i = obj1.options.length - 1; i >= 0; i--) {
-                 if(obj1.options[i].selected) {  
-                    var opt = new Option(obj1.options[i].text, obj1.options[i].value);
-                    opt.selected = true;
-                    obj2.options.add(opt);
-                    obj1.remove(i);
-                }
-             }
-        }
-        
-        function clearSelect(obj) {
-            var len = obj.options.length;
-            for(var i = len - 1; i >= 0; i--) {
-                obj.remove(obj.options[i]);
-            }
-       }
-    </script>
-    
-    <script>
        $(document).ready(function() {
             $.ajax({
                 type : "get",
@@ -111,17 +91,53 @@
                     var opt = new Option(obj1.options[i].text, obj1.options[i].value);
                     opt.selected = true;
                     obj2.options.add(opt);
-                    obj1.remove(i);
+                    obj1.options.remove(i);
                 }
              }
+             sort(obj2);
         }
         
-        function clearSelect(obj) {
-            var len = obj.options.length;
-            for(var i = len - 1; i >= 0; i--) {
-                obj.remove(obj.options[i]);
+        function moveAll(obj1, obj2) {
+            for(var i = obj1.options.length - 1; i >= 0; i--) {
+                var opt = new Option(obj1.options[i].text, obj1.options[i].value);
+                obj2.options.add(opt);
+                obj1.options.remove(i);
             }
-       }
+            sort(obj2);
+        }
+        
+        function sort(sel) {
+            var selLength = sel.options.length;
+            var arr = new Array();
+            var arrLength;
+
+            //将所有Option放入array
+            for(var i=0;i<selLength;i++) {
+                arr[i] = sel.options[i];
+            }
+            arrLength = arr.length;
+
+            arr.sort(fnSortByValue);//排序
+            //先将原先的Option删除
+            while(selLength--) {
+                sel.options[selLength] = null;
+            }
+            //将经过排序的Option放回Select中
+            for(i=0;i<arrLength;i++) {
+                sel.add(new Option(arr[i].text,arr[i].value));
+            }
+        }
+        
+        function fnSortByValue(a,b) {
+            var aComp = a.value.toString();
+            var bComp = b.value.toString();
+
+            if (aComp < bComp)
+                return -1;
+            if (aComp > bComp)
+                return 1;
+            return 0;
+        }
     </script>
     
 </head>
@@ -148,7 +164,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-24">
-                                    <form role="form" action="goEquipSelection" method="post">
+                                    <form role="form">
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="form-group form-group-lg">
@@ -158,11 +174,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <!-- /.col-lg-6 (nested) -->
-                                            <!-- <div>
-                                                <button type="button" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
-                                                <button type="button" class="btn btn-default"><i class="fa fa-arrow-left"></i></button>
-                                            </div> -->
                                             <div class="col-lg-6">
                                                 <div class="form-group form-group-lg">
                                                     <label>已选参数（双击进行删除）</label>
@@ -178,10 +189,11 @@
                                             </div>
                                             <div class="col-lg-2">
                                                 <button type="reset" class="btn btn-danger btn-block btn-outline" 
-                                                onclick="clearSelect(document.getElementById('right-select'))">清空</button>
+                                                onclick="moveAll(document.getElementById('right-select'), document.getElementById('left-select'))">清空</button>
                                             </div>
                                             <div class="col-lg-2">
-                                                <button type="submit" class="btn btn-primary btn-block btn-outline">添加所有</button>
+                                                <button type="button" class="btn btn-primary btn-block btn-outline"
+                                                onclick="moveAll(document.getElementById('left-select'), document.getElementById('right-select'))">添加所有</button>
                                             </div>
                                             <div class="col-lg-4">
                                             </div>
@@ -207,7 +219,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-24">
-                                    <form role="form" action="goAlignResult" method="post">
+                                    <form role="form">
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="form-group form-group-lg">
@@ -217,11 +229,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <!-- /.col-lg-6 (nested) -->
-                                            <!-- <div>
-                                                <button type="button" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
-                                                <button type="button" class="btn btn-default"><i class="fa fa-arrow-left"></i></button>
-                                            </div> -->
                                             <div class="col-lg-6">
                                                 <div class="form-group form-group-lg">
                                                     <label>已选设备（双击进行删除）</label>
@@ -237,10 +244,11 @@
                                             </div>
                                             <div class="col-lg-2">
                                                 <button type="reset" class="btn btn-danger btn-block btn-outline" 
-                                                onclick="clearSelect(document.getElementById('equip-right-select'))">清空</button>
+                                                onclick="moveAll(document.getElementById('equip-right-select'), document.getElementById('equip-left-select'))">清空</button>
                                             </div>
                                             <div class="col-lg-2">
-                                                <button type="submit" class="btn btn-primary btn-block btn-outline">添加所有</button>
+                                                <button type="button" class="btn btn-primary btn-block btn-outline"
+                                                onclick="moveAll(document.getElementById('equip-left-select'), document.getElementById('equip-right-select'))">添加所有</button>
                                             </div>
                                             <div class="col-lg-4">
                                             </div>
@@ -290,7 +298,9 @@
                     onclick="clearSelect(document.getElementById('right-select'))">重置</button>
                 </div>
                 <div class="col-lg-3">
-                    <button type="submit" class="btn btn-success btn-block">提交</button>
+                    <a href="goAlignResult">
+                        <button type="submit" class="btn btn-success btn-block">提交</button>
+                    </a>
                 </div>
                 <div class="col-lg-3">
                 </div>
@@ -301,7 +311,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="alert alert-success">
-                        Learn more about the profiler tool, please contact <a href=mailto:csujiabin@126.com>LiangJiabin@tsinghua.edu.cn</a>.
+                        Learn more about the profiler tool, please contact <a href=mailto:csujiabin@126.com>liangjb13@mails.tsinghua.edu.cn</a>.
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->

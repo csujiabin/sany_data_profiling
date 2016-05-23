@@ -55,10 +55,6 @@
     <script src="sb-admin-2/dist/js/sb-admin-2.js"></script>
     
     <!-- DataTables -->
-<!--     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script> -->
-<!--     <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script> -->
-
-<!--     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <script src="echarts/echarts.min.js"></script>
     
     <script type="text/javascript">
@@ -88,7 +84,6 @@
          });
     });
     </script>
-    
     
     
     <!-- <script type="text/javascript">
